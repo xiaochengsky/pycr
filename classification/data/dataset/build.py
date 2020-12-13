@@ -89,12 +89,13 @@ class train_dataset_triplet(Dataset):
 
 
 class train_dataset(Dataset):
-    def __init__(self, root_dir, transforms):
+    def __init__(self, root_dir, label_path, transforms):
         self.root_dir = root_dir
         self.transform = transforms
         self.labels = []
         self.datas = []
-        label_name = 'train_labels.txt'
+        # label_name = 'train_labels.txt'
+        label_name = label_path
 
         file = open(os.path.join(root_dir, label_name))
         while True:
@@ -127,12 +128,13 @@ class train_dataset(Dataset):
 
 
 class val_dataset(Dataset):
-    def __init__(self, root_dir, transforms):
+    def __init__(self, root_dir, label_path, transforms):
         self.root_dir = root_dir
         self.transform = transforms
         self.labels = []
         self.datas = []
-        label_name = 'val_labels.txt'
+        # label_name = 'val_labels.txt'
+        label_name = label_path
 
         file = open(os.path.join(root_dir, label_name))
         while True:
