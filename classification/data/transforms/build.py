@@ -1,4 +1,4 @@
-from . import cv_transforms as transforms
+from . import cv2_transforms as transforms
 
 
 def build_transforms(cfg_transforms):
