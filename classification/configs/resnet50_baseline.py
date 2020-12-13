@@ -38,10 +38,10 @@ config = dict(
             pin_memory=False,
             # collate_fn="my_collate_fn",
         ),
-
         dataset=dict(
             type="train_dataset",
             root_dir=r"/home/cheng.yang/PyCharmProjects/Cassava/test_set",
+            label_path=r"train_labels.txt",
             # images_per_classes=4,
             # classes_per_minibatch=1,
         ),
@@ -74,6 +74,7 @@ config = dict(
         dataset=dict(
             type="val_dataset",
             root_dir=r"/home/cheng.yang/PyCharmProjects/Cassava/test_set",
+            label_path=r"val_labels.txt",
             # images_per_classes=4,
             # classes_per_minibatch=1,
         ),
