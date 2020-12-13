@@ -8,7 +8,7 @@
 2. 混淆矩阵在 tensorboard 的可视化:
 > 1. modify-> engine.trainer
 
-
+<br><br>
 2020.12.13 <br>
 > 1. fix Acc过低的问题，config 设置 multi-gpus=True, 保证多卡和单卡兼容
 > 2. opencv 代替 pil 进行数据增强，兼容 albumentaion 库
