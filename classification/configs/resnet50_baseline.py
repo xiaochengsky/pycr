@@ -23,7 +23,7 @@ config = dict(
     # 多少个 epoch 做一次验证, 同上
     calc_epoch_periods=0,
 
-    multi_gpus=False,
+    multi_gpus=True,
     max_num_devices=4,
 
     # DataLoader Config
