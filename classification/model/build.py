@@ -21,6 +21,8 @@ def build_model(cfg, pretrain_path=""):
             if key in model_state_dict.keys() and state_dict[key].shape == model_state_dict[key].shape:
                 model_state_dict[key] = state_dict[key]
 
+        # assert
+        assert len(state_dict.keys()) == len(model_state_dict.keys())
         model.load_state_dict(model_state_dict)
 
     return model
