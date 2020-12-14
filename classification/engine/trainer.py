@@ -11,6 +11,7 @@ from ignite.utils import convert_tensor
 from torch.utils.tensorboard import SummaryWriter
 from model.net import freeze_layers, fix_bn
 from torch.cuda.amp import autocast as autocast
+from ..utils.utils import *
 import torch.nn as nn
 
 import logging
@@ -158,6 +159,10 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             num_correct = 0
             num_example = 0
             torch.cuda.empty_cache()
+
+            # cnf_matrix
+            cnf_matrix = np.zeros((5, 5))
+
             with torch.no_grad():
                 for image, target, image_name in tqdm(val_loader):
                     image, target = image.to(master_device), target.to(master_device)
@@ -167,9 +172,21 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
                     num_correct += torch.sum(correct).item()
                     num_example += correct.shape[0]
 
+                    # calc cnf_matrix
+                    p_t = get_cnf_matrix(pred_logit, target)
+                    cnf_matrix += p_t
+
             acc = num_correct / num_example
             ALL_ACC.append(acc)
+
+            # Acc
             writer.add_scalar("Acc", acc, epoch)
+            # cnf
+            class_names = ['CBB(0)', 'CBSD(1)', 'CGM(2)', 'CMD(3)', 'Healthy(4)']
+            writer.add_figure('confusion matrix_' + str(epoch),
+                              figure=plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=False,
+                                                           title='show confusion matrix'), global_step=1)
+
             torch.cuda.empty_cache()
             model.train()
 
@@ -197,7 +214,7 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             if not os.path.isdir(save_model_dir):
                 os.makedirs(save_model_dir)
             sava_model_path = os.path.join(save_dir, tag, "epoch_" + str(epoch) + ".pth")
-
+            save_model_weight_path = os.path.join(save_dir, tag, "weight_epoch_" + str(epoch) + ".pth")
             # https://www.codeleading.com/article/12702208128/
             if cfg['multi_gpus']:
                 save_path = {'model': model.module.state_dict(),
@@ -206,6 +223,11 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
                              'tag': tag,
                              'acc': ALL_ACC[epoch - 1],
                              'cfg': cfg}
+                save_weight_path = {'model': model.module.state_dict(),
+                                    'epoch': epoch,
+                                    'tag': tag,
+                                    'acc': ALL_ACC[epoch-1],
+                                    'cfg': cfg}
             else:
                 # print('len(ALL_ACC): ', len(ALL_ACC))
                 # print('epoch: ', epoch)
@@ -215,6 +237,12 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
                              'tag': tag,
                              'acc': ALL_ACC[epoch - 1],
                              'cfg': cfg}
+                save_weight_path = {'model': model.state_dict(),
+                                    'epoch': epoch,
+                                    'tag': tag,
+                                    'acc': ALL_ACC[epoch-1],
+                                    'cfg': cfg}
+            torch.save(save_weight_path, save_model_weight_path)
             torch.save(save_path, sava_model_path)
 
     max_epochs = cfg['max_epochs']
