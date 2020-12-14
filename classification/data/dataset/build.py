@@ -114,14 +114,7 @@ class train_dataset(Dataset):
 
     def __getitem__(self, idx):
         image_name, target = self.datas[idx], self.labels[idx]
-        # image = cv2.imread(os.path.join(self.root_dir, image_name))
-        # image = image[:, :, ::-1].copy()
-        # sample = {"image": image, "target": target}
-        # if self.transform:
-        #     sample = self.transform(sample)
-        # image, target = sample["image"], sample["target"]
-
-        image = Image.open(os.path.join(self.root_dir, image_name))
+        image = cv2.imread(os.path.join(self.root_dir, image_name))
         if self.transform:
             image = self.transform(image)
         return image, target, image_name
@@ -153,13 +146,7 @@ class val_dataset(Dataset):
 
     def __getitem__(self, idx):
         image_name, target = self.datas[idx], self.labels[idx]
-        # image = cv2.imread(os.path.join(self.root_dir, image_name))
-        # sample = {"image": image, "target": target}
-        # if self.transform:
-        #     sample = self.transform(sample)
-        # image, target = sample["image"], sample["target"]
-        # return image, target, image_name
-        image = Image.open(os.path.join(self.root_dir, image_name))
+        image = cv2.imread(os.path.join(self.root_dir, image_name))
         if self.transform:
             image = self.transform(image)
         return image, target, image_name
@@ -191,8 +178,7 @@ class test_dataset(Dataset):
     def __getitem__(self, idx):
         image_name = self.datas[idx]
         image = cv2.imread(os.path.join(self.root_dir, image_name))
-        sample = {"image": image}
         if self.transform:
-            sample = self.transform(sample)
-        image = sample["image"]
+            image = self.transform(image)
         return image, image_name
+
