@@ -5,13 +5,18 @@ from copy import deepcopy
 from torch.utils.tensorboard import SummaryWriter
 import torchvision.models as models
 
-import model.backbone as backbones
-import model.aggregation as aggregations
-import model.head as heads
-import model.losses as losses
-from model.layers import *
-
-from utils.utils import weights_init_kaiming, weights_init_classifier
+from ..model import backbone as backbones
+from ..model import aggregation as aggregations
+from ..model import head as heads
+from ..model import losses as losses
+from ..model import layers as layer
+from ..utils.utils import *
+# import model.backbone as backbones
+# import model.aggregation as aggregations
+# import model.head as heads
+# import model.losses as losses
+# from model.layers import *
+# from utils.utils import weights_init_kaiming, weights_init_classifier
 
 
 # build bockbones
