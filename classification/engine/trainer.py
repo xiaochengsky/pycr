@@ -183,9 +183,9 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             writer.add_scalar("Acc", acc, epoch)
             # cnf
             class_names = ['CBB(0)', 'CBSD(1)', 'CGM(2)', 'CMD(3)', 'Healthy(4)']
-            writer.add_figure('confusion matrix_' + str(epoch),
-                              figure=plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=False,
-                                                           title='show confusion matrix'), global_step=1)
+            # writer.add_figure('confusion matrix_' + str(epoch),
+            #                   figure=plot_confusion_matrix(cnf_matrix, classes=class_names, normalize=False,
+            #                                                title='show confusion matrix'), global_step=1)
 
             torch.cuda.empty_cache()
             model.train()
