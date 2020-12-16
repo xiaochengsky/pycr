@@ -489,7 +489,7 @@ class RandomPatch(object):
         if random.uniform(0, 1) > self.p_rotate:
             patch = F.randomrotation(patch, degree=(-15, 15))
             # {'image': patch}   ['image']
-            print(patch.shape)
+            # print(patch.shape)
             pass
         return patch
 
@@ -497,7 +497,7 @@ class RandomPatch(object):
         if np.random.random() < self.p:
             self.collct_patch(image)  # update patchpool
             if len(self.patchpool) > self.min_sample_size:
-                print(self.patchpool, self.min_sample_size)
+                # print(self.patchpool, self.min_sample_size)
                 return image
             else:
                 h, w = image.shape[:2]
