@@ -1,6 +1,6 @@
 import copy
 import torch
-import model.net as net
+from ..model import net as net
 
 
 def build_model(cfg, pretrain_path=""):
