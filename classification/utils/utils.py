@@ -6,6 +6,7 @@ from contextlib import contextmanager
 from copy import deepcopy
 import numpy as np
 import itertools
+import pynvml
 import matplotlib.pyplot as plt
 
 import torch
@@ -13,6 +14,20 @@ import torch.backends.cudnn as cudnn
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
+
+
+def get_free_device_ids():
+    pynvml.nvmlInit()
+    num_device = pynvml.nvmlDeviceGetCount()
+    free_device_id = []
+    for i in range(num_device):
+        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+        men_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        # print(men_info.total,men_info.free)
+        # import pdb; pdb.set_trace()
+        if men_info.free >= men_info.total * 0.8:
+            free_device_id.append(i)
+    return free_device_id
 
 
 def init_torch_seeds(seed=0):
