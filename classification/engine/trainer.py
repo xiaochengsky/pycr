@@ -6,15 +6,16 @@ import torch
 import os
 from tqdm import tqdm
 import numpy as np
+
 from ignite.engine.engine import Engine, State, Events
 from ignite.utils import convert_tensor
 from torch.utils.tensorboard import SummaryWriter
-from model.net import freeze_layers, fix_bn
 from torch.cuda.amp import autocast as autocast
-from ..utils.utils import *
 import torch.nn as nn
+from ..model.net import freeze_layers, fix_bn
+from ..utils.utils import *
 
-import logging
+
 
 global ITER, ALL_ITER, ALL_ACC
 ITER = 0
