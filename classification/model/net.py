@@ -128,9 +128,15 @@ class ResNet50_GeM_Identity_CE(nn.Module):
         self.celoss = getattr(losses, loss_type)(**cfg_ce)
 
     def forward(self, inputs, targets=None, extract_features_flag=False, features_type="after"):
-        assert features_type in ("before", "after", "both")
+        assert features_type in ("b_features", "before", "after", "both")
 
-        features = self.aggregation(self.backbone(inputs))
+        b_features = self.backbone(inputs)
+
+        if extract_features_flag and (features_type == 'b_features'):
+            # [N, C, H, W]
+            return b_features
+
+        features = self.aggregation(b_features)
 
         # 从 Head 之前抽取特征
         if extract_features_flag and (features_type == 'before'):
