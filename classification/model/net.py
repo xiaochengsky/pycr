@@ -128,11 +128,11 @@ class ResNet50_GeM_Identity_CE(nn.Module):
         self.celoss = getattr(losses, loss_type)(**cfg_ce)
 
     def forward(self, inputs, targets=None, extract_features_flag=False, features_type="after"):
-        assert features_type in ("b_features", "before", "after", "both")
+        assert features_type in ("backbone", "before", "after", "both")
 
         b_features = self.backbone(inputs)
 
-        if extract_features_flag and (features_type == 'b_features'):
+        if extract_features_flag and (features_type == 'backbone'):
             # [N, C, H, W]
             return b_features
 
