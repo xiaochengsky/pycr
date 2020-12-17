@@ -36,6 +36,7 @@ config = dict(
             num_workers=8,
             drop_last=False,
             pin_memory=False,
+            shuffle=True,
             # collate_fn="my_collate_fn",
         ),
         dataset=dict(
@@ -64,11 +65,11 @@ config = dict(
 
     val_pipeline=dict(
         dataloader=dict(
-                    batch_size=8,
-                    num_workers=8,
-                    drop_last=False,
-                    pin_memory=False,
-                    # collate_fn="my_collate_fn",
+            batch_size=32,
+            num_workers=8,
+            drop_last=False,
+            pin_memory=False,
+            # collate_fn="my_collate_fn",
         ),
 
         dataset=dict(
@@ -81,6 +82,50 @@ config = dict(
 
         transforms=[
             # dict(type="RescalePad",output_size=320),
+            dict(type="ToTensor", ),
+            dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False),
+        ],
+    ),
+
+    gallery_pipeline=dict(
+        dataloader=dict(
+            batch_size=32,
+            num_workers=8,
+            drop_last=False,
+            pin_memory=False,
+            shuffle=False,
+        ),
+
+        dataset=dict(
+            type="gallery_dataset",
+            root_dir=r"",
+            label_path=r""
+        ),
+
+        transforms=[
+            dict(type="RescalePad", output_size=512),
+            dict(type="ToTensor", ),
+            dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False),
+        ],
+    ),
+
+    query_pipeline=dict(
+        dataloader=dict(
+            batch_size=32,
+            num_workers=8,
+            drop_last=False,
+            pin_memory=False,
+            shuffle=False,
+        ),
+
+        dataset=dict(
+            type="query_dataset",
+            root_dir=r"",
+            label_path=r""
+        ),
+
+        transforms=[
+            dict(type="RescalePad", output_size=512),
             dict(type="ToTensor", ),
             dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False),
         ],
