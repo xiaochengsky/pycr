@@ -47,11 +47,11 @@ def build_extractor(cfg):
     aggregator = cfg_c.pop('aggregator')
     aggregator_type = aggregator['aggregator_type']
     print("aggregator_type: ", aggregator_type)
-    if hasattr(aggregator_type, poolings):
+    if hasattr(poolings, aggregator_type):
         print('exist the aggregator_type')
         aggregator = getattr(poolings, aggregator_type)
     else:
         return KeyError("aggregator_type{} is not found!!!".format(aggregator_type))
 
-    return extractor_type, aggregator, save_dirs
+    return extractor_type, aggregator, save_dirs['dir']
 
