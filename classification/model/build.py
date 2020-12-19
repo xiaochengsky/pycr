@@ -5,8 +5,8 @@ from ..model import net as net
 
 def build_model(cfg, pretrain_path=""):
     cfg_c = copy.deepcopy(cfg)
-    if 'net' in cfg["model"].keys():
-        net_cfg = cfg['model']['net']
+    if 'net' in cfg_c["model"].keys():
+        net_cfg = cfg_c['model']['net']
         net_type = net_cfg.pop('type')
         model = getattr(net, net_type)(cfg_c)
     else:
