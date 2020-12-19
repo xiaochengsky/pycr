@@ -3,7 +3,7 @@ import os
 import datetime
 import copy
 import torch
-import tqdm
+from tqdm import tqdm
 
 from ...classification.data.dataloader.build import create_dataloader
 from ...classification.utils.utils import *
@@ -36,13 +36,13 @@ if __name__ == '__main__':
     time_str = datetime.datetime.strftime(current_time, '%Y%m%d_')
     save_dir = os.path.join(cfg['save_dir'], time_str, cfg['tag'])
     # log_dir = os.path.join(cfg['log_dir'], "log_" + time_str + cfg['tag'])
-    cfg['save_dir'] = save_dir
+    # cfg['save_dir'] = save_dir
     # cfg['log_dir'] = log_dir
-    if not os.path.isdir(save_dir):
-        os.makedirs(save_dir)
+    # if not os.path.isdir(save_dir):
+    #     os.makedirs(save_dir)
     # if not os.path.isdir(log_dir):
     #     os.makedirs(log_dir)
-    print('Save dir: ', save_dir)
+    # print('Save dir: ', save_dir)
     # print('Log dir: ', log_dir)
 
     # 构建模型
@@ -58,6 +58,7 @@ if __name__ == '__main__':
         free_device_ids = free_device_ids[:max_num_devices]
 
     master_device = free_device_ids[0]
+    print('master_device: ', master_device)
     model.cuda(master_device)
     model = nn.DataParallel(model, device_ids=free_device_ids).cuda(master_device)
 
@@ -67,13 +68,15 @@ if __name__ == '__main__':
 
     # 构建 extractor_type, aggregator
     extractor_type, aggregator, save_dirs = build_extractor(cfg['extract_pipeline'])
+    if not os.path.isdir(save_dirs):
+        os.makedirs(save_dirs)
 
     # 抽取特征
     gallery_vectors = []
     gallery_fns = []
     gallert_targets = []
 
-    with torch.no_grad:
+    with torch.no_grad():
         model.eval()
         for imgs, targets, img_names in tqdm(gallery_dataloader):
             vectors = model(imgs.to(master_device), extract_features_flag=True, features_type=extractor_type)
@@ -93,13 +96,13 @@ if __name__ == '__main__':
     save_name = config_file.split('.')[-1]
 
     print('save {} features ======>'.format(save_name))
-    np.save(os.path.join(save_dirs, save_name + '_features.npy'), gallery_vectors, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, 'features.npy'), gallery_vectors, allow_pickle=True)
 
     print('save {} img class id ======>'.format(save_name))
-    np.save(os.path.join(save_dir, save_name + "_targets.npy"), gallert_targets, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, "targets.npy"), gallert_targets, allow_pickle=True)
 
     print('save {} img names ======>'.format(save_name))
-    np.save(os.path.join(save_dir, save_name + '_names.npy'), gallery_fns, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, 'names.npy'), gallery_fns, allow_pickle=True)
 
     print('Model[{}] is done...'.format(cfg['model']['net']['type']))
 
