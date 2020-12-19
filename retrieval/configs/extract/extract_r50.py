@@ -11,7 +11,7 @@ config = dict(
     # 间隔多少 iter 打印一次 loss, acc 等数据
     log_periods=5,
 
-    # 权重存储: checkpoints/tag/epoch_10.pth'
+    # features存储: features/tag/'
     save_dir=r"./checkpoints",
     # 当前的配置文件名字, 对应文档的操作, 比如说 aug
     tag='aug',
@@ -110,7 +110,7 @@ config = dict(
 
         # model + extractor_type + dims
         save_dirs=dict(
-            dir="",
+            dir="features",
         ),
     ),
 
