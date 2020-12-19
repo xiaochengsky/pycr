@@ -1,4 +1,7 @@
-# resnet50 baseline
+# 定义抽取特征的方式，包括：
+## 1. 读取数据的增强
+## 2. 抽取的特征层
+## 3. 保存的特征名
 
 config = dict(
     # Basic cofnfig
@@ -30,66 +33,6 @@ config = dict(
         ## dataloader: image2batch, 继承自 torch.utils.data.DataLoader
         ## dataset: 加载 image 和 label: data/dataset/bulid.py
         ## transforms: 在线数据增强: data/transforms/opencv_transforms.py
-    train_pipeline=dict(
-        dataloader=dict(
-            batch_size=32,
-            num_workers=8,
-            drop_last=False,
-            pin_memory=False,
-            shuffle=True, 
-            # collate_fn="my_collate_fn",
-        ),
-
-        dataset=dict(
-            type="train_dataset",
-            root_dir=r"/opt/kaggle/Cassava-leaf-dataset",
-            label_path=r"train_labels_fold5.txt",
-            # images_per_classes=4,
-            # classes_per_minibatch=1,
-        ),
-
-        transforms=[
-            dict(type="ShiftScaleRotate", p=0.3, shift_limit=0.1, scale_limit=(-0.5, 0.2), rotate_limit=15),
-            dict(type="IAAPerspective", p=0.1, scale=(0.05, 0.15)),
-            # dict(type="ChannelShuffle", p=0.1),
-            dict(type="RandomRotate90", p=0.2),
-            dict(type="RandomHorizontalFlip", p=0.5),
-            dict(type="RandomVerticalFlip", p=0.5),
-            dict(type='RescalePad', output_size=512),
-            dict(type="ColorJitter", brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
-            dict(type="RandomErasing", p=0.2, sl=0.02, sh=0.2, rl=0.2),
-            dict(type="RandomPatch", p=0.05, pool_capacity=1000, min_sample_size=100, patch_min_area=0.01,
-                 patch_max_area=0.2, patch_min_ratio=0.2, p_rotate=0.5, p_flip_left_right=0.5),
-            dict(type="GridMask", p=0.15, drop_ratio=0.2), 
-            dict(type="ToTensor", ),
-            dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=True),
-        ],
-    ),
-
-    val_pipeline=dict(
-        dataloader=dict(
-                    batch_size=32,
-                    num_workers=8,
-                    drop_last=False,
-                    pin_memory=False,
-                    # collate_fn="my_collate_fn",
-        ),
-
-        dataset=dict(
-            type="val_dataset",
-            root_dir=r"/opt/kaggle/Cassava-leaf-dataset",
-            label_path=r"val_labels.txt",
-            # images_per_classes=4,
-            # classes_per_minibatch=1,
-        ),
-
-        transforms=[
-            dict(type='RescalePad', output_size=512),
-            dict(type="ToTensor", ),
-            dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False),
-        ],
-    ),
-
     gallery_pipeline=dict(
         dataloader=dict(
             batch_size=32,
@@ -106,7 +49,7 @@ config = dict(
         ),
 
         transforms=[
-            dict(type="RescalePad", output_size=512),
+            dict(type="RescalePad", output_size=640),
             dict(type="ToTensor", ),
             dict(type="Normalize", mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225], inplace=False),
         ],
@@ -151,27 +94,18 @@ config = dict(
         ]
     ),
 
-    # Solver: 学习率调整策略, 从 torch.optim.lr_scheduler 加载
-    # lr
-    lr_scheduler=dict(type="ExponentialLR", gamma=0.99998),
-
-    # optim
-    optimizer=dict(type="Adam", lr=1.5e-4, weight_decay=1e-5),
-
-    # warm_up
-    warm_up=dict(length=2000, min_lr=1.5e-6, max_lr=1.5e-4, froze_num_lyers=8),
-
-    extract=dict(
+    extract_pipeline=dict(
         #
         assemble=0,
 
         extractor=dict(
-            # 从
-            extractor_type="backbone"
+            # 从 backbone 的输出抽取特征
+            extractor_type="before"
         ),
 
-        aggregators=dict(
-            aggregators_type="GeM"
+        aggregator=dict(
+            # 聚合特征的方式
+            aggregator_type="GeM"
         ),
 
         # model + extractor_type + dims
