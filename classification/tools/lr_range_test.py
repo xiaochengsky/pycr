@@ -5,15 +5,15 @@ import copy
 
 sys.path.append('..')
 
-from data.dataloader.build import create_dataloader
-from model.build import build_model
-from solver.optimizer import create_optimizer
-from solver.lr_scheduler import wrapper_lr_scheduler
-from utils.utils import *
-from engine.lr_range_test import *
+from ..data.dataloader.build import create_dataloader
+from ..model.build import build_model
+from ..solver.optimizer import create_optimizer
+from ..solver.lr_scheduler import wrapper_lr_scheduler
+from ..utils.utils import *
+from ..engine.lr_range_test import *
 
 # from data.dataloader import create_dataloader
-from configs import load_args, merge_from_arg
+from ..configs import load_args, merge_from_arg
 
 if __name__ == '__main__':
     arg = vars(load_args())
