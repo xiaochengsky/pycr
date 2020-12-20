@@ -74,4 +74,4 @@ if __name__ == '__main__':
     cfg_copy['log_dir'] = log_dir  # 更新存储目录
 
     do_lr_range_test(cfg_copy, model=model, train_loader=train_dataloader, val_loader=val_dataloader, optimizer=optimizer,
-             scheduler=lr_scheduler, device=free_device_ids)
+             scheduler=lr_scheduler, device=master_device)
