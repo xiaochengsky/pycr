@@ -10,6 +10,10 @@ config = dict(
 
     # 权重存储: checkpoints/tag/epoch_10.pth'
     save_dir=r"./checkpoints",
+
+    save_weight=True,
+    save_all_weight=False,
+
     # 当前的配置文件名字, 对应文档的操作, 比如说 aug
     tag='aug',
 
