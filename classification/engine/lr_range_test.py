@@ -52,6 +52,7 @@ def do_lr_range_test(cfg, model, train_loader, val_loader, optimizer, scheduler,
 
         num_correct, num_example = 0, 0
         with torch.no_grad():
+            model.eval()
             for image, target, image_name in tqdm(val_loader):
                 image, target = image.to(device), target.to(device)
                 pred_logit = model(image, target)
