@@ -37,6 +37,10 @@
 2020.12.19 <br>
 > 1. 修正 model/build.py config.copy 的bug
 > 2. 检索抽特征代码
+> 3. 引入 model EMA，torch.seed
 
+<br><br>
+2020.12.20 <br>
+> 1. 加入 faiss 检索服务
 
    
