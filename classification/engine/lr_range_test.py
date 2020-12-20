@@ -46,6 +46,7 @@ def do_lr_range_test(cfg, model, train_loader, val_loader, optimizer, scheduler,
         total_loss = total_loss.mean()
         scaler.scale(total_loss).backward()
         scaler.step(optimizer)
+        scaler.update()
 
         # get lr
         curr_lr = optimizer.param_groups[0]['lr']
@@ -65,7 +66,7 @@ def do_lr_range_test(cfg, model, train_loader, val_loader, optimizer, scheduler,
         writer.add_scalar('learning rate', curr_lr, all_iter)
         writer.add_scalar("total loss", total_loss.cpu().data.numpy(), all_iter)
         writer.add_scalar("current acc", acc, all_iter)
-
+        print('Iter: {} | Lr: {} | Loss:{} | Acc: {}'.format(all_iter, curr_lr, total_loss.cpu().data.numpy(), acc))
         # change lr
         for param_group in optimizer.param_groups:
             param_group['lr'] *= lr_mult
