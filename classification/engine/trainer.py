@@ -15,8 +15,6 @@ import torch.nn as nn
 from ..model.net import freeze_layers, fix_bn
 from ..utils.utils import *
 
-
-
 global ITER, ALL_ITER, ALL_ACC
 ITER = 0
 ALL_ITER = 0
@@ -87,6 +85,7 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             scaler.step(optimizer)
             writer.add_scalar("total loss", total_loss.cpu().data.numpy())
             scaler.update()
+            ema.update(model)
 
             # 返回 loss.item()
             return output_transform(x, y, None, total_loss)
@@ -103,6 +102,9 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
     trainer.add_event_handler(Events.ITERATION_COMPLETED, TerminateOnNan)
 
     RunningAverage(output_transform=lambda x: x).attach(trainer, 'avg_loss')
+
+    # EMA
+    ema = ModelEMA(model)
 
     # ITERATION_COMPLETED : triggered when the iteration is ended
     @trainer.on(Events.ITERATION_COMPLETED)
@@ -215,37 +217,70 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             save_model_dir = os.path.join(save_dir, tag)
             if not os.path.isdir(save_model_dir):
                 os.makedirs(save_model_dir)
-            sava_model_path = os.path.join(save_dir, tag, "epoch_" + str(epoch) + ".pth")
-            save_model_weight_path = os.path.join(save_dir, tag, "weight_epoch_" + str(epoch) + ".pth")
+
+            save_all_weight_path = os.path.join(save_dir, tag, "epoch_" + str(epoch) + ".pth")
+            save_ema_all_weight_path = os.path.join(save_dir, tag, "ema_epoch_" + str(epoch) + ".pth")
+
+            save_weight_path = os.path.join(save_dir, tag, "weight_epoch_" + str(epoch) + ".pth")
+            save_ema_weight_path = os.path.join(save_dir, tag, "ema_weight_epoch_" + str(epoch) + ".pth")
+
             # https://www.codeleading.com/article/12702208128/
             if cfg['multi_gpus']:
-                save_path = {'model': model.module.state_dict(),
-                             'optimizer': optimizer.state_dict(),
-                             'epoch': epoch,
-                             'tag': tag,
-                             'acc': ALL_ACC[epoch - 1],
-                             'cfg': cfg}
-                save_weight_path = {'model': model.module.state_dict(),
-                                    'epoch': epoch,
-                                    'tag': tag,
-                                    'acc': ALL_ACC[epoch-1],
-                                    'cfg': cfg}
+                save_all_weight = {'model': model.module.state_dict(),
+                                   'optimizer': optimizer.state_dict(),
+                                   'epoch': epoch,
+                                   'tag': tag,
+                                   'acc': ALL_ACC[epoch - 1],
+                                   'cfg': cfg}
+                save_ema_all_weight = {'model': ema.ema.module.state_dict(),
+                                       'optimizer': optimizer.state_dict(),
+                                       'epoch': epoch,
+                                       'tag': tag,
+                                       'acc': ALL_ACC[epoch - 1],
+                                       'cfg': cfg}
+
+                save_weight = {'model': model.module.state_dict(),
+                               'epoch': epoch,
+                               'tag': tag,
+                               'acc': ALL_ACC[epoch - 1],
+                               'cfg': cfg}
+                save_ema_weight = {'model': ema.ema.module.state_dict(),
+                                   'epoch': epoch,
+                                   'tag': tag,
+                                   'acc': ALL_ACC[epoch - 1],
+                                   'cfg': cfg}
             else:
                 # print('len(ALL_ACC): ', len(ALL_ACC))
                 # print('epoch: ', epoch)
-                save_path = {'model': model.state_dict(),
-                             'optimizer': optimizer.state_dict(),
-                             'epoch': epoch,
-                             'tag': tag,
-                             'acc': ALL_ACC[epoch - 1],
-                             'cfg': cfg}
-                save_weight_path = {'model': model.state_dict(),
-                                    'epoch': epoch,
-                                    'tag': tag,
-                                    'acc': ALL_ACC[epoch-1],
-                                    'cfg': cfg}
-            torch.save(save_weight_path, save_model_weight_path)
-            torch.save(save_path, sava_model_path)
+                save_all_weight = {'model': model.state_dict(),
+                                   'optimizer': optimizer.state_dict(),
+                                   'epoch': epoch,
+                                   'tag': tag,
+                                   'acc': ALL_ACC[epoch - 1],
+                                   'cfg': cfg}
+                save_ema_all_weight = {'model': ema.ema.state_dict(),
+                                       'optimizer': optimizer.state_dict(),
+                                       'epoch': epoch,
+                                       'tag': tag,
+                                       'acc': ALL_ACC[epoch - 1],
+                                       'cfg': cfg}
+
+                save_weight = {'model': model.state_dict(),
+                               'epoch': epoch,
+                               'tag': tag,
+                               'acc': ALL_ACC[epoch - 1],
+                               'cfg': cfg}
+                save_ema_weight = {'model': ema.ema.state_dict(),
+                                   'epoch': epoch,
+                                   'tag': tag,
+                                   'acc': ALL_ACC[epoch - 1],
+                                   'cfg': cfg}
+            if cfg['save_weight']:
+                torch.save(save_weight, save_weight_path)
+                torch.save(save_ema_weight, save_ema_weight_path)
+            if cfg['save_all_weight']:
+                torch.save(save_all_weight, save_all_weight_path)
+                torch.save(save_ema_all_weight, save_ema_all_weight_path)
 
     max_epochs = cfg['max_epochs']
     trainer.run(train_loader, max_epochs=max_epochs)
