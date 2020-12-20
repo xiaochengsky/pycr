@@ -16,6 +16,9 @@ from ..engine.lr_range_test import *
 from ..configs import load_args, merge_from_arg
 
 if __name__ == '__main__':
+
+    init_torch_seeds(1)
+
     arg = vars(load_args())
     config_file = arg['config_file']
 
