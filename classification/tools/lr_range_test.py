@@ -70,10 +70,6 @@ if __name__ == '__main__':
     model.cuda(master_device)
     model = nn.DataParallel(model, device_ids=free_device_ids).cuda(master_device)
 
-    if 'enable_backends_cudnn_benchmark' in cfg and cfg['enable_backends_cudnn_benckmark']:
-        print("enable backends cudnn benchmark")
-        torch.backends.cudnn.benchmark = True
-
     cfg_copy['save_dir'] = save_dir  # 更新存储目录
     cfg_copy['log_dir'] = log_dir  # 更新存储目录
 
