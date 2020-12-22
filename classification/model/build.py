@@ -1,6 +1,6 @@
 import copy
 import torch
-from ..model import net as net
+from ..model import nets as nets
 
 
 def build_model(cfg, pretrain_path=""):
@@ -8,7 +8,7 @@ def build_model(cfg, pretrain_path=""):
     if 'net' in cfg_c["model"].keys():
         net_cfg = cfg_c['model']['net']
         net_type = net_cfg.pop('type')
-        model = getattr(net, net_type)(cfg_c)
+        model = getattr(nets, net_type)(cfg_c)
     else:
         raise KeyError("net{} is not found!!!".format(cfg))
 
