@@ -182,6 +182,8 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             acc = num_correct / num_example
             ALL_ACC.append(acc)
             print("Acc: ", acc)
+            print('cnf_matrix: ')
+            print(cnf_matrix)
 
             # Acc
             writer.add_scalar("Acc", acc, epoch)
