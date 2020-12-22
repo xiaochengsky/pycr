@@ -13,9 +13,9 @@ from ...model import losses as losses
 from ...utils.utils import *
 
 
-class ResNet50_GeM_Identity_CE(nn.Module):
+class ResNet50_GeM_Identity_FocalLoss(nn.Module):
     def __init__(self, cfg):
-        super(ResNet50_GeM_Identity_CE, self).__init__()
+        super(ResNet50_GeM_Identity_FocalLoss, self).__init__()
         self.cfg = cfg
         cfg_model = self.cfg['model']
         cfg_model = deepcopy(cfg_model)
