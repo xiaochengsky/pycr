@@ -12,7 +12,7 @@ from ignite.utils import convert_tensor
 from torch.utils.tensorboard import SummaryWriter
 from torch.cuda.amp import autocast as autocast
 import torch.nn as nn
-from ..model.net import freeze_layers, fix_bn
+from ..model.components import freeze_layers, fix_bn
 from ..utils.utils import *
 
 global ITER, ALL_ITER, ALL_ACC
