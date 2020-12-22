@@ -1,2 +1,2 @@
-from .trainer import *
-from .tester import *
+from .train import *
+from .test import *
