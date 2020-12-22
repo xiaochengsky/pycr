@@ -1,2 +1,2 @@
-# from . import ResNet50_GeM_Identity_CE
-# from . import ResNet50_GeM_Identity_FocalLoss
+from .ResNet50_GeM_Identity_CE import *
+from .ResNet50_GeM_Identity_FocalLoss import *
