@@ -46,7 +46,7 @@ config = dict(
 
         dataset=dict(
             type="train_dataset",
-            root_dir=r"/opt/kaggle/Cassava-leaf-dataset",
+            root_dir=r"/home/yc/opt/kaggle/Cassava-leaf-dataset",
             label_path=r"train_labels_fold5.txt",
             # images_per_classes=4,
             # classes_per_minibatch=1,
@@ -81,8 +81,8 @@ config = dict(
 
         dataset=dict(
             type="val_dataset",
-            root_dir=r"/opt/kaggle/Cassava-leaf-dataset",
-            label_path=r"val_labels.txt",
+            root_dir=r"/home/yc/opt/kaggle/Cassava-leaf-dataset",
+            label_path=r"test_labels_fold5.txt",
             # images_per_classes=4,
             # classes_per_minibatch=1,
         ),
