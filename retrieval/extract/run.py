@@ -10,7 +10,9 @@ from ...classification.utils.utils import *
 from .build import *
 from ..configs import load_args, merge_from_arg
 
+
 if __name__ == '__main__':
+    init_torch_seeds(1)
     arg = vars(load_args())
     config_file = arg['config_file']
 
@@ -28,9 +30,9 @@ if __name__ == '__main__':
 
     # 构建数据
     gallery_dataloader = create_dataloader(cfg['gallery_pipeline'])
-    query_dataloader = create_dataloader(cfg['query_pipeline'])
+    # query_dataloader = create_dataloader(cfg['query_pipeline'])
     print('gallery_dataloader: ', len(gallery_dataloader))
-    print('query_dataloader: ', len(query_dataloader))
+    # print('query_dataloader: ', len(query_dataloader))
 
     current_time = datetime.datetime.now()
     time_str = datetime.datetime.strftime(current_time, '%Y%m%d_')
@@ -68,13 +70,18 @@ if __name__ == '__main__':
 
     # 构建 extractor_type, aggregator
     extractor_type, aggregator, save_dirs = build_extractor(cfg['extract_pipeline'])
-    if not os.path.isdir(save_dirs):
-        os.makedirs(save_dirs)
+
+    print('save_dirs: ', save_dirs)
+    save_name = config_file.split('.')[-1]
+    print('save_name: ', save_name)
+    if not os.path.isdir(os.path.join(save_dirs, save_name)):
+        print('create dirs: {}'.format(os.path.join(save_dirs, save_name)))
+        os.makedirs(os.path.join(save_dirs, save_name))
 
     # 抽取特征
     gallery_vectors = []
     gallery_fns = []
-    gallert_targets = []
+    gallery_targets = []
 
     with torch.no_grad():
         model.eval()
@@ -90,23 +97,56 @@ if __name__ == '__main__':
             for i in range(len(vectors)):
                 gallery_vectors.append(vectors[i])
                 gallery_fns.append(img_names[i])
-                gallert_targets.append(targets[i])
+                gallery_targets.append(targets[i])    
 
+    print('\n')
     print('Model[{}] save gallery features and names ======>'.format(cfg['model']['net']['type']))
-    save_name = config_file.split('.')[-1]
 
     print('save {} features ======>'.format(save_name))
-    np.save(os.path.join(save_dirs, save_name, 'features.npy'), gallery_vectors, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, 'gallery_features.npy'), gallery_vectors, allow_pickle=True)
 
     print('save {} img class id ======>'.format(save_name))
-    np.save(os.path.join(save_dirs, save_name, "targets.npy"), gallert_targets, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, "gallery_targets.npy"), gallery_targets, allow_pickle=True)
 
     print('save {} img names ======>'.format(save_name))
-    np.save(os.path.join(save_dirs, save_name, 'names.npy'), gallery_fns, allow_pickle=True)
+    np.save(os.path.join(save_dirs, save_name, 'gallery_names.npy'), gallery_fns, allow_pickle=True)
 
     print('Model[{}] is done...'.format(cfg['model']['net']['type']))
+    print('\n')
 
+    # 抽取特征
+    query_vectors = []
+    query_fns = []
+    query_targets = []
 
+    with torch.no_grad():
+        model.eval()
+        for imgs, targets, img_names in tqdm(query_dataloader):
+            vectors = model(imgs.to(master_device), extract_features_flag=True, features_type=extractor_type)
 
+            if extractor_type == "backbone":
+                vectors = aggregator(vectors)
+                vectors = vectors.view((-1, vectors.shape[1],)).cpu().numpy()
+            else:
+                vectors = vectors.cpu().numpy()
 
+            for i in range(len(vectors)):
+                query_vectors.append(vectors[i])
+                query_fns.append(img_names[i])
+                query_targets.append(targets[i])
+
+    print('\n')
+    print('Model[{}] save query features and names ======>'.format(cfg['model']['net']['type']))
+    
+    print('save {} features ======>'.format(save_name))
+    np.save(os.path.join(save_dirs, save_name, 'query_features.npy'), query_vectors, allow_pickle=True)
+
+    print('save {} img class id ======>'.format(save_name))
+    np.save(os.path.join(save_dirs, save_name, "query_targets.npy"), query_targets, allow_pickle=True)
+
+    print('save {} img names ======>'.format(save_name))
+    np.save(os.path.join(save_dirs, save_name, 'query_names.npy'), query_fns, allow_pickle=True)
+
+    print('Model[{}] is done...'.format(cfg['model']['net']['type']))
+    print('\n')
 
