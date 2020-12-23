@@ -30,22 +30,13 @@ if __name__ == '__main__':
 
     # 构建数据
     gallery_dataloader = create_dataloader(cfg['gallery_pipeline'])
-    # query_dataloader = create_dataloader(cfg['query_pipeline'])
+    query_dataloader = create_dataloader(cfg['query_pipeline'])
     print('gallery_dataloader: ', len(gallery_dataloader))
-    # print('query_dataloader: ', len(query_dataloader))
+    print('query_dataloader: ', len(query_dataloader))
 
     current_time = datetime.datetime.now()
     time_str = datetime.datetime.strftime(current_time, '%Y%m%d_')
     save_dir = os.path.join(cfg['save_dir'], time_str, cfg['tag'])
-    # log_dir = os.path.join(cfg['log_dir'], "log_" + time_str + cfg['tag'])
-    # cfg['save_dir'] = save_dir
-    # cfg['log_dir'] = log_dir
-    # if not os.path.isdir(save_dir):
-    #     os.makedirs(save_dir)
-    # if not os.path.isdir(log_dir):
-    #     os.makedirs(log_dir)
-    # print('Save dir: ', save_dir)
-    # print('Log dir: ', log_dir)
 
     # 构建模型
     model = build_model(cfg, pretrain_path=arg['load_path'])
