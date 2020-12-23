@@ -46,4 +46,12 @@
 <br><br>
 2020.12.22 <br>
 > 1. 加入 imbalance 均衡采样;
-> 2. 加入 FocalLoss 损失函数。
+> 2. 加入 FocalLoss。
+
+<br><br>
+2020.12.23 <br>
+> 1. 修改 lr_range_test 路径问题;
+> 2. 修复 EMA 针对多卡的 bug;
+> 3. 修复 retrieval 部分的路径问题;
+> 4. 检索效果和分类效果对齐, ema 更占优势。
+
