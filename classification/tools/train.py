@@ -54,7 +54,10 @@ if __name__ == '__main__':
     print('Save dir: ', save_dir)
     print('Log dir: ', log_dir)
 
+    # build model and ema_model
     model = build_model(cfg, pretrain_path=arg['load_path'])
+    ema_model = build_model(cfg)
+
     optimizer = create_optimizer(cfg['optimizer'], model)
     lr_scheduler = wrapper_lr_scheduler(cfg['lr_scheduler'], optimizer)
 
@@ -74,5 +77,5 @@ if __name__ == '__main__':
     cfg_copy['save_dir'] = save_dir  # 更新存储目录
     cfg_copy['log_dir'] = log_dir  # 更新存储目录
 
-    do_train(cfg_copy, model=model, train_loader=train_dataloader, val_loader=val_dataloader, optimizer=optimizer,
+    do_train(cfg_copy, model=model, ema_model=ema_model, train_loader=train_dataloader, val_loader=val_dataloader, optimizer=optimizer,
              scheduler=lr_scheduler, device=free_device_ids)
