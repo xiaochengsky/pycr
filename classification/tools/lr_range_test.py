@@ -10,7 +10,7 @@ from ..model.build import build_model
 from ..solver.optimizer import create_optimizer
 from ..solver.lr_scheduler import wrapper_lr_scheduler
 from ..utils.utils import *
-from ..engine.lr_range_test import *
+from ..engine.lr_range_tester import *
 
 # from data.dataloader import create_dataloader
 from ..configs import load_args, merge_from_arg
