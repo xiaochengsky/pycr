@@ -21,16 +21,23 @@ ALL_ITER = 0
 ALL_ACC = []
 
 
-def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device):
+def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, scheduler, device):
     scaler = torch.cuda.amp.GradScaler()
     log_dir = cfg['log_dir']
     max_epochs = cfg['max_epochs']
 
     writer = SummaryWriter(log_dir=log_dir)
 
-    # logging.basicConfig(level=logging.DEBUG)
-    # logger = logging.getLogger("Cassava")
-    # logger.info("Start training ======>")
+    # 选择主卡计算 loss
+    master_device = device[0]
+
+    # EMA init
+    if cfg['multi_gpus']:
+        model_state_dict = model.module.state_dict()
+    else:
+        model_state_dict = model.state_dict()
+    ema_model.load_state_dict(model_state_dict)
+    ema = ModelEMA(ema_model)
 
     def _prepare_batch(batch, device=None, non_blocking=False):
         x, y, img_names = batch
@@ -70,6 +77,7 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
         """
         if device:
             model.to(device)
+            ema_model.to(device)
 
         def _update(engine, batch):
             model.train()
@@ -92,9 +100,6 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
 
         return Engine(_update)
 
-    # 选择主卡计算 loss
-    master_device = device[0]
-
     # 创建训练 engine
     trainer = create_supervised_dp_trainer(model, optimizer, device=master_device)
 
@@ -102,9 +107,6 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
     trainer.add_event_handler(Events.ITERATION_COMPLETED, TerminateOnNan)
 
     RunningAverage(output_transform=lambda x: x).attach(trainer, 'avg_loss')
-
-    # EMA
-    ema = ModelEMA(model)
 
     # ITERATION_COMPLETED : triggered when the iteration is ended
     @trainer.on(Events.ITERATION_COMPLETED)
@@ -118,9 +120,6 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
             for param_group in optimizer.param_groups:
                 curr_lr = param_group['lr']
                 break
-            # logger.info("Epoch[{}], Iteration[{}/{}], Loss: {:.3f}, Base Lr: {:.2e}"
-            #             .format(engine.state.epoch, ITER, len(train_loader),
-            #                     engine.state.metrics['avg_loss'], curr_lr))
             print("Epoch[{}], Iteration[{}/{}], Loss: {:.3f}, Base Lr: {:.2e}"
                   .format(engine.state.epoch, ITER, len(train_loader),
                           engine.state.metrics['avg_loss'], curr_lr))
@@ -234,7 +233,7 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
                                    'tag': tag,
                                    'acc': ALL_ACC[epoch - 1],
                                    'cfg': cfg}
-                save_ema_all_weight = {'model': ema.ema.module.state_dict(),
+                save_ema_all_weight = {'model': ema.ema.state_dict(),
                                        'optimizer': optimizer.state_dict(),
                                        'epoch': epoch,
                                        'tag': tag,
@@ -246,7 +245,7 @@ def do_train(cfg, model, train_loader, val_loader, optimizer, scheduler, device)
                                'tag': tag,
                                'acc': ALL_ACC[epoch - 1],
                                'cfg': cfg}
-                save_ema_weight = {'model': ema.ema.module.state_dict(),
+                save_ema_weight = {'model': ema.ema.state_dict(),
                                    'epoch': epoch,
                                    'tag': tag,
                                    'acc': ALL_ACC[epoch - 1],
