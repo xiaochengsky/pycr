@@ -34,6 +34,7 @@ if __name__ == '__main__':
     # 脚本输入参数替换掉字典输入
     cfg = merge_from_arg(cfg, arg)
     cfg_copy = copy.deepcopy(cfg)
+    print(cfg_copy)
 
     train_dataloader = create_dataloader(cfg['train_pipeline'])
     val_dataloader = create_dataloader(cfg['val_pipeline'])
