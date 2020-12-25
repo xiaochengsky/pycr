@@ -10,7 +10,7 @@ def load_args():
     # model
     parser.add_argument('--load-path', help="path of pre-train model", type=str)
     parser.add_argument("-device", type=int, nargs='+', help="list of device_id, e.g. [0,1]")
-
+    parser.add_argument("--log-dir", help="output the log dir", type=str)
     arg = parser.parse_args()
     return arg
 
@@ -22,6 +22,9 @@ def merge_from_arg(config, arg):  # --> dict{},dict{}
         config['tag'] = (((arg['config_file']).split('/')[-1]).split('.'))[0]
     print("TAG : ", config['tag'])
 
+    if arg['log_dir']:
+        config['log_dir'] = arg['log_dir']
+    print('log dir: ', config['log_dir'])
     # if arg['max_num_devices']:
     #     config['max_num_devices'] = arg['max_num_devices']
 
