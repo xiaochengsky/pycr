@@ -1,6 +1,7 @@
 import torch
 import torch.utils.data
 import torchvision
+import numpy as np
 
 
 class ImbalancedDatasetSampler(torch.utils.data.sampler.Sampler):
@@ -30,19 +31,20 @@ class ImbalancedDatasetSampler(torch.utils.data.sampler.Sampler):
             if num_samples is None else num_samples
         print('num_samples: ', self.num_samples)
         # distribution of classes in the dataset
-        label_to_count = {}
-        for idx in self.indices:
-            label = self._get_label(dataset, idx)
-            if label in label_to_count:
-                label_to_count[label] += 1
-            else:
-                label_to_count[label] = 1
-
-        # {3: 49, 1: 150, 2: 150, 4: 150}
-        # print(label_to_count)
-        # weight for each sample
-        weights = [1.0 / label_to_count[self._get_label(dataset, idx)]
-                   for idx in self.indices]
+        # label_to_count = {}
+        # for idx in self.indices:
+        #     label = self._get_label(dataset, idx)
+        #     if label in label_to_count:
+        #         label_to_count[label] += 1
+        #     else:
+        #         label_to_count[label] = 1
+        #
+        # # {3: 49, 1: 150, 2: 150, 4: 150}
+        # # print(label_to_count)
+        # # weight for each sample
+        # weights = [1.0 / label_to_count[self._get_label(dataset, idx)]
+        #            for idx in self.indices]
+        weights = np.load("weight.npy").tolist()
         self.weights = torch.DoubleTensor(weights)
 
     def _get_label(self, dataset, idx):
