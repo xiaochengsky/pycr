@@ -4,7 +4,8 @@
 ## 3. 保存的特征名
 
 config = dict(
-    # Basic cofnfig
+    # Basic configs
+    kaggle=False,
     enable_backends_cudnn_benchmark=True,
     max_epochs=100 + 1,
 
