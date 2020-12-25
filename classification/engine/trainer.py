@@ -6,6 +6,7 @@ import torch
 import os
 from tqdm import tqdm
 import numpy as np
+import random
 
 from ignite.engine.engine import Engine, State, Events
 from ignite.utils import convert_tensor
@@ -41,6 +42,19 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
 
     def _prepare_batch(batch, device=None, non_blocking=False):
         x, y, img_names = batch
+
+        # Multi-Scale
+        if cfg['train_multi_scale']:
+            if 'train_grid_size' in cfg:
+                gs = cfg['train_grid_size']
+            else:
+                gs = 32
+            sz = random.randrange(x.shape[2] * 0.5, x.shape[2] * 1.5 + gs) // gs * gs  # size
+            sf = sz / max(x.shape[2:])  # scale factor
+            if sf != 1:
+                ns = [math.ceil(s * sf / gs) * gs for s in x.shape[2:]]
+                x = F.interpolate(x, size=ns, mode='bilinear', align_corners=False)
+
         return (convert_tensor(x, device=device, non_blocking=non_blocking),
                 convert_tensor(y, device=device, non_blocking=non_blocking))
 
@@ -125,6 +139,11 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
                           engine.state.metrics['avg_loss'], curr_lr))
             writer.add_scalar('loss', engine.state.metrics['avg_loss'], ALL_ITER)
 
+    # EPOCH_COMPLETED : triggered when the epoch is ended
+    @trainer.on(Events.EPOCH_COMPLETED)
+    def lr_scheduler_epoch(engine):
+        scheduler.EPOCH_COMPLETED()
+
     # lr_scheduler warm up
     @trainer.on(Events.ITERATION_COMPLETED)
     def lr_scheduler_iteration(engine):
@@ -143,11 +162,6 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
 
         # if ALL_ITER == length:
         #     pass
-
-    # EPOCH_COMPLETED : triggered when the epoch is ended
-    @trainer.on(Events.EPOCH_COMPLETED)
-    def lr_scheduler_epoch(engine):
-        scheduler.EPOCH_COMPLETED()
 
     @trainer.on(Events.EPOCH_COMPLETED)
     def clac_acc(engine):
