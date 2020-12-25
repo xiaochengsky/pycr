@@ -34,6 +34,9 @@ config = dict(
         ## dataloader: image2batch, 继承自 torch.utils.data.DataLoader
         ## dataset: 加载 image 和 label: data/dataset/bulid.py
         ## transforms: 在线数据增强: data/transforms/opencv_transforms.py
+
+    train_multi_scale=True,
+    train_grid_size=32,
     train_pipeline=dict(
         dataloader=dict(
             batch_size=32,
