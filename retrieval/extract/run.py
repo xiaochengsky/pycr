@@ -41,10 +41,13 @@ if __name__ == '__main__':
     # 构建模型
     model = build_model(cfg, pretrain_path=arg['load_path'])
 
-    if arg['device']:
-        free_device_ids = arg['device']
+    if 'kaggle' in cfg and cfg['kaggle']:
+        free_device_ids = [0]
     else:
-        free_device_ids = get_free_device_ids()
+        if arg['device']:
+            free_device_ids = arg['device']
+        else:
+            free_device_ids = get_free_device_ids()
 
     max_num_devices = cfg['max_num_devices']
     if len(free_device_ids) >= max_num_devices:
@@ -54,10 +57,6 @@ if __name__ == '__main__':
     print('master_device: ', master_device)
     model.cuda(master_device)
     model = nn.DataParallel(model, device_ids=free_device_ids).cuda(master_device)
-
-    if 'enable_backends_cudnn_benchmark' in cfg and cfg['enable_backends_cudnn_benchmark']:
-        print("enable backends cudnn benchmark")
-        torch.backends.cudnn.benchmark = True
 
     # 构建 extractor_type, aggregator
     extractor_type, aggregator, save_dirs = build_extractor(cfg['extract_pipeline'])
@@ -140,4 +139,3 @@ if __name__ == '__main__':
 
     print('Model[{}] is done...'.format(cfg['model']['net']['type']))
     print('\n')
-
