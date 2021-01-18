@@ -32,5 +32,19 @@
 > 1. 增加 gallery 和 query 的数据配置和处理;
 
 
+<br><br>
+2021.01.19 <br>
+> 1. 大修改;
+> 2. 添加 config 0.895 的 snapmix 的 baseline;
+> 3. 读取图像从 openCV 修改为 PIL;
+> 4. 添加 engine/tmp_trainer.py 用于临时修改非正式代码;
+> 5. 修改 engine/trainer.py;
+> 6. layer 添加 rga 模块;
+> 7. 添加 losses/snapmixloss.py;
+> 8. 添加 nets/snapmix 的 res50 和 rga 模块的 res50;
+> 9. 添加 layers 的 config 配置;
+> 10. 分离 fineturn 和其它部分的学习率变化策略;
+> 11. 修改 train.py;
+> 12. 添加 snapmix 的处理，修改 torch, numpy, random 的种子。
 
    
