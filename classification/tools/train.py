@@ -10,7 +10,8 @@ from ..model.build import build_model
 from ..solver.optimizer import create_optimizer
 from ..solver.lr_scheduler import wrapper_lr_scheduler
 from ..utils.utils import *
-from ..engine.trainer import *
+# from ..engine.trainer import *
+from ..engine.tmp_trainer import *
 from ..configs import load_args, merge_from_arg
 
 # from data.dataloader import create_dataloader
@@ -18,7 +19,7 @@ from ..configs import load_args, merge_from_arg
 
 if __name__ == '__main__':
 
-    init_torch_seeds(1)
+    init_torch_seeds(0)
 
     arg = vars(load_args())
     config_file = arg['config_file']
@@ -67,12 +68,14 @@ if __name__ == '__main__':
     else:
         free_device_ids = get_free_device_ids()
 
+    print('free_device_ids: ', free_device_ids)
     max_num_devices = cfg['max_num_devices']
     if len(free_device_ids) >= max_num_devices:
         free_device_ids = free_device_ids[:max_num_devices]
 
     master_device = free_device_ids[0]
     model.cuda(master_device)
+    ema_model.cuda(master_device)
     model = nn.DataParallel(model, device_ids=free_device_ids).cuda(master_device)
 
     cfg_copy['save_dir'] = save_dir  # 更新存储目录
