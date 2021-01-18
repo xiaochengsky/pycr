@@ -15,7 +15,10 @@ from torch.cuda.amp import autocast as autocast
 import torch.nn as nn
 from ..model.components import freeze_layers, fix_bn
 from ..utils.utils import *
+from ..utils.snapmix import *
 
+
+np.set_printoptions(suppress=True)
 global ITER, ALL_ITER, ALL_ACC
 ITER = 0
 ALL_ITER = 0
@@ -100,9 +103,14 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
 
             # amp
             with autocast():
-                total_loss = model(x, y)
+                if "snapmix_pipeline" in cfg.keys():
+                    cfg_snapmix = cfg["snapmix_pipeline"]
+                    x, ya, yb, lam_a, lam_b = snapmix(x, y, cfg_snapmix, model)
+                    total_loss = model(x, ya=ya, yb=yb, lam_a=lam_a, lam_b=lam_b)
+                else:
+                    total_loss = model(x, y)
+                    total_loss = total_loss.mean()
 
-            total_loss = total_loss.mean()
             scaler.scale(total_loss).backward()
             scaler.step(optimizer)
             writer.add_scalar("total loss", total_loss.cpu().data.numpy())
