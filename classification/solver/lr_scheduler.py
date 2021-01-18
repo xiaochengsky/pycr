@@ -8,6 +8,8 @@ class wrapper_lr_scheduler(object):
         cfg_lr_scheduler_c = cfg_lr_scheduler.copy()
         lr_scheduler_type = cfg_lr_scheduler_c.pop("type")
         if hasattr(lr_scheduler, lr_scheduler_type):
+            print(optimizer)
+            print(lr_scheduler_type, cfg_lr_scheduler_c)
             self.lr = getattr(lr_scheduler, lr_scheduler_type)(optimizer, **cfg_lr_scheduler_c)
         else:
             raise KeyError("lr_scheduler{} not found!!!".format(lr_scheduler_type))
