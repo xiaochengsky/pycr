@@ -9,7 +9,7 @@ from ..model import backbone as backbones
 from ..model import aggregation as aggregations
 from ..model import head as heads
 from ..model import losses as losses
-from ..model import layers as layer
+from ..model import layers as layers
 from ..utils.utils import *
 
 
@@ -21,6 +21,16 @@ def build_backbone(cfg_backbone):
         return backbone
     else:
         raise KeyError("backbond_type{} is not found!!!".format(backbone_type))
+
+
+# build layer
+def build_layer(cfg_layer):
+    layer_type = cfg_layer.pop('type')
+    if hasattr(layers, layer_type):
+        layer = getattr(layers, layer_type)(**cfg_layer)
+        return layer
+    else:
+        raise KeyError("layer_type{} is not found!!!".format(layer_type))
 
 
 # build aggregations
