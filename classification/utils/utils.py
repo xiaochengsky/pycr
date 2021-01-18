@@ -8,6 +8,7 @@ import numpy as np
 import itertools
 import pynvml
 import matplotlib.pyplot as plt
+import random
 
 import torch
 import torch.backends.cudnn as cudnn
@@ -25,20 +26,25 @@ def get_free_device_ids():
         men_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
         # print(men_info.total,men_info.free)
         # import pdb; pdb.set_trace()
-        if men_info.free >= men_info.total * 0.8:
+        if men_info.free >= men_info.total * 0.5:
             free_device_id.append(i)
     return free_device_id
 
 
 def init_torch_seeds(seed=0):
     # Speed-reproducibility tradeoff https://pytorch.org/docs/stable/notes/randomness.html
-    torch.manual_seed(seed)
-    if seed == 0:  # slower, more reproducible
-        cudnn.deterministic = True
-        cudnn.benchmark = False
-    else:  # faster, less reproducible
-        cudnn.deterministic = False
-        cudnn.benchmark = True
+    # torch.manual_seed(seed)
+    # if seed == 0:  # slower, more reproducible
+    #     cudnn.deterministic = True
+    #     cudnn.benchmark = False
+    # else:  # faster, less reproducible
+    #     cudnn.deterministic = False
+    #     cudnn.benchmark = True
+    random.seed(seed)
+    np.random.seed(seed)  # cpu vars
+    torch.manual_seed(seed)  # cpu  vars
+    torch.cuda.manual_seed(seed)  # cpu  vars
+    torch.cuda.manual_seed_all(seed)  # gpu vars
 
 
 def is_parallel(model):
@@ -164,4 +170,3 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel('Predicted label')
     plt.xlabel('True label')
     return fig
-
