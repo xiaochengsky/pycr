@@ -8,7 +8,7 @@ import copy
 import torch
 
 from .aggregator import poolings as poolings
-from ...classification.model import net as net
+from ...classification.model import nets as net
 
 
 def build_model(cfg, pretrain_path=""):
