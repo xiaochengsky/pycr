@@ -45,6 +45,9 @@
 > 9. 添加 layers 的 config 配置;
 > 10. 分离 fineturn 和其它部分的学习率变化策略;
 > 11. 修改 train.py;
-> 12. 添加 snapmix 的处理，修改 torch, numpy, random 的种子。
+> 12. 添加 snapmix 的处理，修改 torch, numpy, random 的种子
 
-   
+
+<br><br>
+2021.01.20 <br>
+> 1. 修改检索服务的 bug.
