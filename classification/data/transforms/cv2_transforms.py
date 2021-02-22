@@ -673,6 +673,117 @@ class ShiftScaleRotate(object):
                                                                                                        self.rotate_limit)
 
 
+class HueSaturationValue(object):
+    def __init__(self, p=0.5, hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20, always_apply=False):
+        self.p = p
+        self.hue_shift_limit = hue_shift_limit
+        self.sat_shift_limit = sat_shift_limit
+        self.val_shift_limit = val_shift_limit
+        self.aug = A.HueSaturationValue(hue_shift_limit=hue_shift_limit, sat_shift_limit=sat_shift_limit,
+                                        val_shift_limit=val_shift_limit, p=p)
+
+    def __call__(self, image):
+        image = self.aug(image)
+        return image
+
+    def __repr__(self):
+        return self.__class__.__name__ + "(p={}, hue_shift_limit={}, sat_shift_limit={}, val_shift_limit={})".format(
+            self.p,
+            self.hue_shift_limit,
+            self.sat_shift_limit,
+            self.val_shift_limit)
+
+
+class Cutout(object):
+    def __init__(self, num_holes=8, max_h_size=8, max_w_size=8, fill_value=0, always_apply=False, p=0.5):
+        self.p = p
+        self.num_holes = num_holes
+        self.max_h_size = max_h_size
+        self.max_w_size = max_w_size
+        self.fill_value = fill_value
+        self.aug = A.Cutout(num_holes=8, max_h_size=8, max_w_size=8, fill_value=0, always_apply=False, p=0.5)
+
+    def __call__(self, image):
+        image = self.aug(image)
+        return image
+
+    def __repr__(self):
+        return self.__class__.__name__ + "(p={}, num_holes={}, max_h_size={}, max_w_size={}, fill_value={}".format(
+            self.p,
+            self.num_holes,
+            self.max_h_size,
+            self.max_w_size,
+            self.fill_value,
+        )
+
+
+class CoarseDropout(object):
+    def __init__(self,
+                 max_holes=8,
+                 max_height=8,
+                 max_width=8,
+                 min_holes=None,
+                 min_height=None,
+                 min_width=None,
+                 fill_value=0,
+                 mask_fill_value=None,
+                 always_apply=False,
+                 p=0.5):
+        self.max_holes = max_holes
+        self.max_height = max_height
+        self.max_width = max_width
+        self.min_holes = min_holes if min_holes is not None else max_holes
+        self.min_height = min_height if min_height is not None else max_height
+        self.min_width = min_width if min_width is not None else max_width
+        self.fill_value = fill_value
+        self.mask_fill_value = mask_fill_value
+        self.p = p
+        self.always_apply = always_apply
+        self.aug = A.CoarseDropout(p=self.p, max_holes=self.max_holes, max_height=self.max_height,
+                                   max_width=self.max_width,
+                                   min_holes=self.min_holes, min_height=self.min_height, min_width=self.min_width,
+                                   fill_value=self.fill_value, mask_fill_value=self.mask_fill_value,
+                                   always_apply=self.always_apply)
+
+    def __call__(self, image):
+        image = self.aug(image)
+        return image
+
+    def __repr__(self):
+        return self.__class__.__name__ + "CoarseDropout"
+
+
+class Transpose(object):
+    def __init__(self, p=0.5):
+        self.p = p
+        self.aug = A.Transpose(p=self.p)
+
+    def __call__(self, image):
+        image = self.aug(image)
+        return image
+
+    def __repr__(self):
+        return self.__class__.__name__ + "Transpose"
+
+
+class RandomBrightnessContrast(object):
+    def __init__(self, brightness_limit=0.2, contrast_limit=0.2, brightness_by_max=True, always_apply=False, p=0.5):
+        self.brightness_limit = brightness_limit
+        self.contrast_limit = contrast_limit
+        self.brightness_by_max = brightness_by_max
+        self.always_apply = always_apply
+        self.p = p
+        self.aug = A.RandomBrightnessContrast(brightness_limit=self.brightness_limit, contrast_limit=self.contrast_limit,
+                                              brightness_by_max=self.brightness_by_max, always_apply=self.always_apply,
+                                              p=self.p)
+    def __call__(self, image):
+        image = self.aug(image)
+        return image
+
+    def __repr__(self):
+        return self.__class__.__name__ + "RandomBrightnessContrast"
+
+
 class MultisizePad(object):
     def __init__(self, p=0.1, resizes=[448], padsize=512):
         self.p = p
