@@ -1,5 +1,5 @@
 # PyCR
-**Pytorch for Classification and Retrieval** 
+**Py**torch for **C**lassification and **R**etrieval
 ![Pipeline](https://raw.githubusercontent.com/xiaochengsky/PyCR/master/Pipeline.png)
 <br>
 
