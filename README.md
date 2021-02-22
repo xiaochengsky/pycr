@@ -1,29 +1,34 @@
-# PyCR
+# **PyCR**
 **Py**torch for **C**lassification and **R**etrieval
 ![Pipeline](https://raw.githubusercontent.com/xiaochengsky/PyCR/master/Pipeline.png)
 <br>
 
 
-## Classification
-### Data
+## **Classification**
+### **Data**
+#### Dataset Load
 - [x] openCV
 - [x] PIL
-- [x] Many Augmentaion [SnapMix, CutMix, Mixup, CutOut, and so on...]
+#### Sampler
+- [x] Imbalance
+#### Augmentation
+- [x] general Augmentaions and albumentations
+- [x] CutOut/Mixup/CutMix/SnapMix
+<br>
 
-
-### BackBone
+### **BackBone**
 (fork from [TIMM](https://github.com/rwightman/pytorch-image-models))
 - [x] TIMM
 <br>
 
-### Layer
+### **Layer**
 - [x] dropblock
 - [ ] Non local
 - [ ] DCN
 - [x] RGA Module
 <br>
   
-### Aggregation
+### **Aggregation**
 - [x] GAP
 - [x] GMP
 - [x] GAP + GMP
@@ -31,13 +36,13 @@
 - [x] SoftPool
 <br>
   
-### Head
+### **Head**
 - [x] BNNeck Head
 - [x] Identity Head
 - [x] Reduction Head
 <br>
   
-### Loss
+### **Loss**
 - [x] CE
 - [x] FocalLoss
 - [x] Norm Softmax
@@ -45,20 +50,41 @@
 - [x] CosFace
 - [x] ArcFace
 - [x] SnapMix
-- [x] EQLoss
+- [x] EqLoss
 - [ ] Circle
 
-### Other
-- [x] PyTorch Optimizer and Scheduler
+### **Other**
+- [x] TensorBoard
 - [x] EMA
 - [x] Multi-Scale Training
-- [] TTA
+- [x] w/o Multi-GPUs
+- [ ] TTA
 
 
 
-## Retrieval
-Refer to PyRetri and FastReID design
+## **Retrieval**
+### **Dimension Process**
+- [x] PCA
+- [ ] SVD
 
+### **Feature Enhance**
+- [ ] DBA
+- [ ] QE
+
+### **Distance Metric**
+- [ ] Euclidean
+- [ ] Cosine
+
+### **Re-rank**
+- [ ] K-reciprocal
+- [ ] K-reciprocal++
+<br>
+  
+
+## **References**
+[1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
+[2] [PyRetri](https://github.com/PyRetri/PyRetri) <br>
+[3] [reid-strong-baseline](https://github.com/michuanhaohao/reid-strong-baseline) <br>
 
 
 <div style='display: none'>
