@@ -66,6 +66,8 @@ if __name__ == '__main__':
     if len(free_device_ids) >= max_num_devices:
         free_device_ids = free_device_ids[:max_num_devices]
 
+    print('free_device_ids: ', free_device_ids)
+
     master_device = free_device_ids[0]
     model.cuda(master_device)
     model = nn.DataParallel(model, device_ids=free_device_ids).cuda(master_device)
