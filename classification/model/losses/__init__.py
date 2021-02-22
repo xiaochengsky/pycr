@@ -1,6 +1,10 @@
 from .cross_entropy import *
 from .focalloss import *
 from .snapmixloss import *
-
-
-
+from .snapmixeqloss import *
+from .tf_efficient_loss import *
+from .SEResNets_loss import *
+from .arcface import *
+from .triplet_loss import *
+from .norm_softmax import *
+from .cosface import *
