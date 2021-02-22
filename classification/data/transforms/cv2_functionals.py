@@ -342,7 +342,7 @@ def rescale(image, output_size, interpolation=cv.INTER_LINEAR):
 
     h, w = image.shape[:2]
     if isinstance(output_size, int):
-        if h > w:
+        if h < w:
             # new_h,new_w = output_size*h/w,output_size
             new_h, new_w = output_size, output_size * w / h
         else:
