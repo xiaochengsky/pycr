@@ -340,3 +340,4 @@ def _hsv2rgb(img):
     a4 = torch.stack((a1, a2, a3))
 
     return torch.einsum("ijk, xijk -> xjk", mask.to(dtype=img.dtype), a4)
+
