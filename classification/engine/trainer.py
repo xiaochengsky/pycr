@@ -18,7 +18,6 @@ from ..utils.utils import *
 from ..utils.snapmix import *
 
 
-np.set_printoptions(suppress=True)
 global ITER, ALL_ITER, ALL_ACC
 ITER = 0
 ALL_ITER = 0
@@ -52,7 +51,7 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
                 gs = cfg['train_grid_size']
             else:
                 gs = 32
-            sz = random.randrange(x.shape[2] * 0.5, x.shape[2] * 1.5 + gs) // gs * gs  # size
+            sz = random.randrange(x.shape[2] * 0.75, x.shape[2] * 1.25 + gs) // gs * gs  # size
             sf = sz / max(x.shape[2:])  # scale factor
             if sf != 1:
                 ns = [math.ceil(s * sf / gs) * gs for s in x.shape[2:]]
@@ -106,7 +105,7 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
                 if "snapmix_pipeline" in cfg.keys():
                     cfg_snapmix = cfg["snapmix_pipeline"]
                     x, ya, yb, lam_a, lam_b = snapmix(x, y, cfg_snapmix, model)
-                    total_loss = model(x, ya=ya, yb=yb, lam_a=lam_a, lam_b=lam_b)
+                    total_loss = model(x, ya, yb, lam_a, lam_b)
                 else:
                     total_loss = model(x, y)
                     total_loss = total_loss.mean()
