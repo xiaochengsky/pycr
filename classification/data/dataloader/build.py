@@ -2,6 +2,7 @@ from ..dataset import build_dataset
 from ..transforms.build import build_transforms
 # import .build_dataset
 from . import sampler as sampler
+from . import collate_fn as collate_fnn
 from torch.utils.data import DataLoader
 
 
@@ -36,8 +37,9 @@ def create_dataloader(cfg_data_pipeline):
     else:
         if "collate_fn" in cfg_dataloader:
             cfg_collate_fn = cfg_dataloader.pop("collate_fn")
-            if hasattr(my_collate_fn, cfg_collate_fn):
-                collate_fn = getattr(my_collate_fn, cfg_collate_fn)
+            if hasattr(collate_fnn, cfg_collate_fn):
+                print('use owner collate_fn')
+                collate_fn = getattr(collate_fnn, cfg_collate_fn)
                 dataloader = DataLoader(dataset, collate_fn=collate_fn, **cfg_dataloader)
                 return dataloader
         else:
