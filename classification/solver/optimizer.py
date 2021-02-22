@@ -1,3 +1,4 @@
+
 from torch import optim
 
 
@@ -8,21 +9,24 @@ def create_optimizer(cfg_optimizer, model):
         # 获取模型所有参数
         params = model.parameters()
         print(cfg_optimizer_c)
-
+        print(model.eval())
         param_type = []
         param_groups = []
         # 为不同的层设置不同的 lr
         for name, param in model.named_parameters():
-            if 'backbone' in name and 'backbone' not in param_type:
+            if 'backbone' in name[:8] and 'backbone' not in param_type:
                 param_type.append('backbone')
                 param_groups.append({'params': model.backbone.parameters(), 'lr': cfg_optimizer_c['lr'] * 0.1})
-            if 'layer' in name and 'layer' not in param_type:
+            if 'layer' in name[:5] and 'layer' not in param_type:
                 param_type.append('layer')
                 param_groups.append({'params': model.layer.parameters(), 'lr': cfg_optimizer_c['lr']})
-            if 'aggregation' in name and 'aggregation' not in param_type:
+            if 'aggregation' in name[:11] and 'aggregation' not in param_type:
                 param_type.append('aggregation')
                 param_groups.append({'params': model.aggregation.parameters(), 'lr': cfg_optimizer_c['lr']})
-            if 'celoss' in name and 'celoss' not in param_type:
+            if 'tripletloss' in name[:11] and 'tripletloss' not in param_type:
+                param_type.append('tripletloss')
+                param_groups.append({'params': model.tripletloss.parameters(), 'lr': cfg_optimizer_c['lr']})
+            if 'celoss' in name[:6] and 'celoss' not in param_type:
                 param_type.append('celoss')
                 param_groups.append({'params': model.celoss.parameters(), 'lr': cfg_optimizer_c['lr']})
 
@@ -39,11 +43,13 @@ def create_optimizer(cfg_optimizer, model):
             if i == 0:
                 print('backbone')
             else:
-                print('else')
-            lr += [param_group['lr']]
+                print('other')
+            lr +=[ param_group['lr'] ]
             i += 1
         print(lr)
 
         return optimizer
     else:
         raise KeyError("optimizer{} is not found!!!".format(optimizer_type))
+
+
