@@ -49,8 +49,11 @@
 - [ ] Circle
 
 ### Other
-- [x] EMA
 - [x] PyTorch Optimizer and Scheduler
+- [x] EMA
+- [x] Multi-Scale Training
+- [] TTA
+
 
 
 ## Retrieval
