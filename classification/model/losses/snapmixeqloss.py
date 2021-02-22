@@ -5,7 +5,7 @@ import numpy as np
 
 
 class SnapMixEQLoss(nn.Module):
-    def __init__(self, in_feat=2048, num_classes=5, weight=1.0, freq_info=[], gamma=None, _lambda=None):
+    def __init__(self, in_feat=2048, num_classes=5, weight=1.0, freq_info=[], gamma=None, _lambda=None, device=0):
         super(SnapMixEQLoss, self).__init__()
         self.num_classes = num_classes
         self.linear = nn.Linear(in_feat, num_classes, bias=True)
@@ -17,20 +17,20 @@ class SnapMixEQLoss(nn.Module):
         self.num_inputs = 16
 
     def exclude_func(self):
-        weight_beta = torch.zeros(self.num_classes).cuda()
+        weight_beta = torch.zeros(self.num_classes).cuda(device)
         beta = torch.zeros_like(weight_beta).uniform_()
         weight_beta[beta < self.gamma] = 1
         weight_beta = weight_beta.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         return weight_beta
 
     def threshold_func(self):
-        weight_thre = torch.zeros(self.num_classes, dtype=torch.float).cuda()
+        weight_thre = torch.zeros(self.num_classes, dtype=torch.float).cuda(device)
         weight_thre[self._freq_info < self._lambda] = 1
         weight_thre = weight_thre.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         return weight_thre
 
     def expand_label(self, predicts, target):
-        one_hot = torch.zeros_like(predicts, dtype=torch.float).cuda()
+        one_hot = torch.zeros_like(predicts, dtype=torch.float).cuda(device)
         targets = target.unsqueeze(1)
         one_hot = one_hot.scatter_(1, targets, 1)
         return one_hot
@@ -256,7 +256,7 @@ class SnapMixEQLossShareWeight(nn.Module):
 
 # 添加 iid 条件
 class SnapMixEQLossIIDWeight(nn.Module):
-    def __init__(self, in_feat=2048, num_classes=5, weight=1.0, freq_info=[], gamma=None, _lambda=None):
+    def __init__(self, in_feat=2048, num_classes=5, weight=1.0, freq_info=[], gamma=None, _lambda=None, device=0):
         super(SnapMixEQLossIIDWeight, self).__init__()
         self.num_classes = num_classes
         self.linear = nn.Linear(in_feat, num_classes, bias=True)
@@ -266,22 +266,23 @@ class SnapMixEQLossIIDWeight(nn.Module):
         self._lambda = _lambda
         self.gamma = gamma
         self.num_inputs = 16
+        self.device = device
 
     def exclude_func(self):
-        weight_beta = torch.zeros(self.num_classes).cuda()
+        weight_beta = torch.zeros(self.num_classes).cuda(self.device)
         beta = torch.zeros_like(weight_beta).uniform_()
         weight_beta[beta < self.gamma] = 1
         weight_beta = weight_beta.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         return weight_beta
 
     def threshold_func(self):
-        weight_thre = torch.zeros(self.num_classes, dtype=torch.float).cuda()
+        weight_thre = torch.zeros(self.num_classes, dtype=torch.float).cuda(self.device)
         weight_thre[self._freq_info < self._lambda] = 1
         weight_thre = weight_thre.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         return weight_thre
 
     def customize_func(self, targets):
-        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda()
+        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda(self.device)
         weight_cust = weight_cust.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         weight_cust = torch.bernoulli(weight_cust)
         idx = torch.arange(self.num_inputs)
@@ -294,7 +295,7 @@ class SnapMixEQLossIIDWeight(nn.Module):
         return weight_cust
 
     def customize_func_share(self, target_a, target_b):
-        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda()
+        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda(self.device)
         weight_cust = weight_cust.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         weight_cust = torch.bernoulli(weight_cust)
         idx = torch.arange(self.num_inputs)
@@ -308,7 +309,7 @@ class SnapMixEQLossIIDWeight(nn.Module):
         return weight_cust
 
     def customize_func_iid(self, target_a, target_b):
-        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda()
+        weight_cust = torch.zeros(self.num_classes, dtype=torch.float).uniform_(0, 1).cuda(self.device)
         weight_cust = weight_cust.view(1, self.num_classes).expand(self.num_inputs, self.num_classes)
         weight_cust = torch.bernoulli(weight_cust)
         idx = torch.arange(self.num_inputs)
@@ -323,7 +324,7 @@ class SnapMixEQLossIIDWeight(nn.Module):
         return weight_cust
 
     def expand_label(self, predicts, target):
-        one_hot = torch.zeros_like(predicts, dtype=torch.float).cuda()
+        one_hot = torch.zeros_like(predicts, dtype=torch.float).cuda(self.device)
         targets = target.unsqueeze(1)
         one_hot = one_hot.scatter_(1, targets, 1)
         return one_hot
