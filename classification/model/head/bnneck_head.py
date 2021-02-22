@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-# from utils.utils import weights_init_kaiming
+from ...utils import weights_init_kaiming
 import torch.autograd as autograd
 
 
@@ -8,7 +8,7 @@ class BNneckHead(nn.Module):
     def __init__(self, in_feat, num_classes):
         super(BNneckHead, self).__init__()
         self.bnneck = nn.BatchNorm2d(in_feat)
-        # self.bnneck.apply(weights_init_kaiming)
+        self.bnneck.apply(weights_init_kaiming)
         self.bnneck.bias.requires_grad_(False)
 
     def forward(self, features):
