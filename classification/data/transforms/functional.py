@@ -984,3 +984,4 @@ def erase(img, i, j, h, w, v, inplace=False):
 
     img[:, i:i + h, j:j + w] = v
     return img
+
