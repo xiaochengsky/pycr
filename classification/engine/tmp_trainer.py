@@ -18,7 +18,6 @@ from ..model.components import freeze_layers, fix_bn
 from ..utils.utils import *
 from ..utils.snapmix import *
 
-
 np.set_printoptions(suppress=True)
 
 global ITER, ALL_ITER, ALL_ACC
@@ -26,10 +25,14 @@ ITER = 0
 ALL_ITER = 0
 ALL_ACC = []
 import pdb
+
+
 # pdb.set_trace()
 
 def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, scheduler, device):
-    # scaler = torch.cuda.amp.GradScaler()
+    if 'amp' in cfg.keys() and cfg['amp'] is True:
+        scaler = torch.cuda.amp.GradScaler()
+
     log_dir = cfg['log_dir']
     max_epochs = cfg['max_epochs']
 
@@ -50,11 +53,16 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
         x, y, img_names = batch
         # Multi-Scale
         if cfg['train_multi_scale']:
-            if 'train_grid_size' in cfg:
+            if 'train_grid_size' in cfg and 'train_multi_scale_min' in cfg and 'train_multi_scale_max' in cfg:
                 gs = cfg['train_grid_size']
+                ms_min = cfg['train_multi_scale_min']
+                ms_max = cfg['train_multi_scale_max']
             else:
                 gs = 32
-            sz = random.randrange(x.shape[2] * 0.75, x.shape[2] * 1.25 + gs) // gs * gs  # size
+                ms_min = 416
+                ms_max = 512
+            # sz = random.randrange(x.shape[2] * 0.75, x.shape[2] * 1.25 + gs) // gs * gs  # size
+            sz = random.randrange(ms_min, ms_max) // gs * gs
             sf = sz / max(x.shape[2:])  # scale factor
             if sf != 1:
                 ns = [math.ceil(s * sf / gs) * gs for s in x.shape[2:]]
@@ -102,23 +110,29 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
             # optimizer.zero_grad()
             x, y = prepare_batch(batch, device=device, non_blocking=non_blocking)
 
-            # amp
-            # with autocast():
-            if "snapmix_pipeline" in cfg.keys():
-                cfg_snapmix = cfg["snapmix_pipeline"]
-                x, ya, yb, lam_a, lam_b = snapmix(x, y, cfg_snapmix, model)
-                total_loss = model(x, ya=ya, yb=yb, lam_a=lam_a, lam_b=lam_b)
+            if 'amp' in cfg.keys() and cfg['amp'] is True:
+                # amp
+                with autocast():
+                    total_loss = model(x, y)
+                scaler.scale(total_loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
             else:
-                total_loss = model(x, y)
-                total_loss = total_loss.mean()
-            
-            optimizer.zero_grad()
-            total_loss.backward()
-            optimizer.step()
-            # scaler.scale(total_loss).backward()
-            # scaler.step(optimizer)
+
+                if "snapmix_pipeline" in cfg.keys():
+                    cfg_snapmix = cfg["snapmix_pipeline"]
+                    x, ya, yb, lam_a, lam_b = snapmix(x, y, cfg_snapmix, model)
+                    total_loss = model(x, ya=ya, yb=yb, lam_a=lam_a, lam_b=lam_b)
+                else:
+                    total_loss = model(x, y)
+                    total_loss = total_loss.mean()
+
+                optimizer.zero_grad()
+                total_loss.backward()
+                optimizer.step()
+
             writer.add_scalar("total loss", total_loss.cpu().data.numpy())
-            # scaler.update()
+
             ema.update(model)
 
             # 返回 loss.item()
@@ -179,7 +193,7 @@ def do_train(cfg, model, ema_model, train_loader, val_loader, optimizer, schedul
             for param_group in optimizer.param_groups:
                 if i == 0:
                     param_group['lr'] = lr * 0.1
-                else:                   
+                else:
                     param_group['lr'] = lr
                 i += 1
         else:
