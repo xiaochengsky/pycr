@@ -1,5 +1,5 @@
 # Doctor for Cassava
-
+![Pipeline](https://github.com/xiaochengsky/PyCR/blob/master/Pipeline.png)
 
 ## Update log
 2020.12.12 <br>
