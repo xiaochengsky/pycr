@@ -1,6 +1,64 @@
-# Doctor for Cassava
+# PyCR
+**Pytorch for Classification and Retrieval** 
 ![Pipeline](https://raw.githubusercontent.com/xiaochengsky/PyCR/master/Pipeline.png)
+<br>
 
+
+## Classification
+### Data
+- [x] openCV
+- [x] PIL
+- [x] Many Augmentaion [SnapMix, CutMix, Mixup, CutOut, and so on...]
+
+
+### BackBone
+(fork from [TIMM](https://github.com/rwightman/pytorch-image-models))
+- [x] TIMM
+<br>
+
+### Layer
+- [x] dropblock
+- [ ] Non local
+- [ ] DCN
+- [x] RGA Module
+<br>
+  
+### Aggregation
+- [x] GAP
+- [x] GMP
+- [x] GAP + GMP
+- [x] GeM(w/o Fix)
+- [x] SoftPool
+<br>
+  
+### Head
+- [x] BNNeck Head
+- [x] Identity Head
+- [x] Reduction Head
+<br>
+  
+### Loss
+- [x] CE
+- [x] FocalLoss
+- [x] Norm Softmax
+- [x] Triplet 
+- [x] CosFace
+- [x] ArcFace
+- [x] SnapMix
+- [x] EQLoss
+- [ ] Circle
+
+### Other
+- [x] EMA
+- [x] PyTorch Optimizer and Scheduler
+
+
+## Retrieval
+Refer to PyRetri and FastReID design
+
+
+
+<div style='display: none'>
 ## Update log
 2020.12.12 <br>
 > 1. 测试脚本，排查 infer Acc 过低的问题;
@@ -88,4 +146,4 @@
 > 1. 增加 eqloss + snapmix 的 loss函数
 > 2. 增加 efficient 的 backbone
 
-
+ </div>
