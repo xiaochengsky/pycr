@@ -19,8 +19,6 @@ from ..configs import load_args, merge_from_arg
 
 if __name__ == '__main__':
 
-    init_torch_seeds(0)
-
     arg = vars(load_args())
     config_file = arg['config_file']
 
@@ -36,6 +34,11 @@ if __name__ == '__main__':
     cfg = merge_from_arg(cfg, arg)
     cfg_copy = copy.deepcopy(cfg)
     print(cfg_copy)
+
+    if 'seed' in cfg:
+        init_torch_seeds(cfg['seed'])
+    else:
+        init_torch_seeds(0)
 
     train_dataloader = create_dataloader(cfg['train_pipeline'])
     val_dataloader = create_dataloader(cfg['val_pipeline'])
