@@ -66,7 +66,6 @@ def rand_bbox(size, lam, center=False, attcen=None):
     return bbx1, bby1, bbx2, bby2
 
 
-
 def get_spm(input, target, conf, model):
     if 'train_multi_scale' in conf:
         imgsize = (input.size(2), input.size(3))
