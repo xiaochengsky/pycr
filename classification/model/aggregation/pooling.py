@@ -37,9 +37,9 @@ class GeneralizedMeanPooling(nn.Module):
 
 
 # p fix住
-class GeneralizedMeanPoolingFix(nn.Module):
+class GeneralizedMeanPoolingP(nn.Module):
     def __init__(self, p=3, output_size=1, eps=1e-6):
-        super(GeneralizedMeanPoolingFix, self).__init__()
+        super(GeneralizedMeanPoolingP, self).__init__()
         assert p > 0
         self.p = float(p)
         self.output_size = output_size
