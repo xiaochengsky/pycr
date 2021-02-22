@@ -1,5 +1,5 @@
 # **PyCR**
-**Py**torch for **C**lassification and **R**etrieval
+**Py**torch for **C**lassification and **R**etrieval <br>
 ![Pipeline](https://raw.githubusercontent.com/xiaochengsky/PyCR/master/Pipeline.png)
 <br>
 
@@ -52,6 +52,7 @@
 - [x] SnapMix
 - [x] EqLoss
 - [ ] Circle
+<br>
 
 ### **Other**
 - [x] TensorBoard
@@ -59,7 +60,9 @@
 - [x] Multi-Scale Training
 - [x] w/o Multi-GPUs
 - [ ] TTA
-
+<br>
+<br>
+<br>
 
 
 ## **Retrieval**
