@@ -51,7 +51,7 @@
 - [x] ArcFace
 - [x] SnapMix
 - [x] EqLoss
-- [ ] Circle
+- [x] Circle
 <br>
 
 ### **Other**
