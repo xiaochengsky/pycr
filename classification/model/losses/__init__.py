@@ -8,3 +8,4 @@ from .arcface import *
 from .triplet_loss import *
 from .norm_softmax import *
 from .cosface import *
+from .circleloss import *
