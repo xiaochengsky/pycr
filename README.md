@@ -84,7 +84,13 @@
 - [ ] K-reciprocal
 - [ ] K-reciprocal++
 <br>
-  
+<br>
+<br>
+
+## Step by Step
+<br>
+<br>
+<br>
 
 ## **References**
 [1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
@@ -92,4 +98,4 @@
 [3] [reid-strong-baseline](https://github.com/michuanhaohao/reid-strong-baseline) <br>
 
 
-## Step by Step
+
