@@ -5,7 +5,7 @@ from torch.nn import Parameter
 
 
 class CosFace(nn.Module):
-    def __init__(self, in_feat=1664, num_classes=3097, scale=30.0, margin=0.35, weight=1.0):
+    def __init__(self, in_feat=1664, num_classes=5, scale=30.0, margin=0.35, weight=1.0):
         super(CosFace, self).__init__()
         self.in_feature = in_feat
         self.out_feature = num_classes
