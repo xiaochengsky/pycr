@@ -25,6 +25,8 @@
 - [x] dropblock
 - [ ] Non local
 - [ ] DCN
+- [ ] SKNet
+- [ ] CBAM
 - [x] RGA Module
 <br>
   
