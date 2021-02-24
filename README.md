@@ -77,8 +77,7 @@
 - [x] DBA
 - [x] QE(w/o weight)
 
-### **Distance Metric**
-- [x] Faiss
+### **Distance Metric(By Faiss)**
 - [x] Euclidean
 - [x] Cosine
 
