@@ -6,27 +6,6 @@ import math
 import numpy as np
 
 
-class Arcface_LinearScheduler(nn.Module):
-    def __init__(self, in_feat=2048, num_classes=5, scale=35, dropout_rate=0.2, weight=1.0, start_value=0,
-                 stop_value=0.3, nr_steps=6e4):
-        super(Arcface_LinearScheduler, self).__init__()
-        self.loss = ArcfaceLoss_Dropout(in_feat, num_classes, scale, margin=start_value, dropout_rate=dropout_rate,
-                                        weight=weight)
-        self.i = 0
-        self.drop_values = np.linspace(start=start_value, stop=stop_value, num=int(nr_steps))
-
-    def forward(self, features, targets):
-        self.step()  # 每次迭代 更新 prob
-        # print(self.loss._m)
-        return self.loss(features, targets)
-
-    def step(self):
-        if self.i < len(self.drop_values):
-            # import pdb; pdb.set_trace()
-            self.loss._m = self.drop_values[self.i]
-        self.i += 1
-
-
 class ArcfaceLoss_Dropout(nn.Module):
     def __init__(self, in_feat=2048, num_classes=5, scale=64, margin=0.35, dropout_rate=0.2, weight=1.0):
         super(ArcfaceLoss_Dropout, self).__init__()
@@ -134,7 +113,6 @@ class ArcfaceLoss(nn.Module):
         )
 
 
-
 class ArcFaceLoss(nn.Module):
     r"""Implement of large margin arc distance: :
         Args:
@@ -145,6 +123,7 @@ class ArcFaceLoss(nn.Module):
 
             cos(theta + m)
         """
+
     def __init__(self, in_feat=2048, num_classes=5, s=30.0, m=0.50, easy_margin=False, weight=1.0):
         super(ArcFaceLoss, self).__init__()
         self.in_features = in_feat
@@ -184,7 +163,8 @@ class ArcFaceLoss(nn.Module):
             one_hot = torch.zeros(cosine.size(), device='cuda')
             one_hot.scatter_(1, targets.view(-1, 1).long(), 1)
             # -------------torch.where(out_i = {x_i if condition_i else y_i) -------------
-            predicts = (one_hot * phi) + ((1.0 - one_hot) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
+            predicts = (one_hot * phi) + (
+                        (1.0 - one_hot) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
             predicts *= self.s
             # print(output)
 
@@ -205,6 +185,7 @@ class ArcFaceSnapMixLoss(nn.Module):
 
             cos(theta + m)
         """
+
     def __init__(self, in_feat=2048, num_classes=5, s=30.0, m=0.50, easy_margin=False, weight=1.0, device=0):
         super(ArcFaceSnapMixLoss, self).__init__()
         self.in_features = in_feat
@@ -253,9 +234,11 @@ class ArcFaceSnapMixLoss(nn.Module):
                     one_hot_yb = torch.zeros(cosine.size(), device='cuda')
                     one_hot_yb.scatter_(1, yb.view(-1, 1).long(), 1)
                     # -------------torch.where(out_i = {x_i if condition_i else y_i) -------------
-                    predicts_ya = (one_hot_ya * phi) + ((1.0 - one_hot_ya) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
+                    predicts_ya = (one_hot_ya * phi) + (
+                                (1.0 - one_hot_ya) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
                     predicts_ya *= self.s
-                    predicts_yb = (one_hot_yb * phi) + ((1.0 - one_hot_yb) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
+                    predicts_yb = (one_hot_yb * phi) + (
+                                (1.0 - one_hot_yb) * cosine)  # you can use torch.where if your torch.__version__ is 0.4
                     predicts_yb *= self.s
 
                     loss_a = self.criterion(predicts_ya, ya)
@@ -280,4 +263,3 @@ if __name__ == '__main__':
     inputs = torch.randn(2, 2048)
     target = torch.LongTensor([0, 2])
     print(loss(inputs, target))
-
