@@ -96,8 +96,8 @@
 <br>
 
 
-## **Future**
-- [ ] Self-Attenation
+## **ToDo**
+- [ ] SA Modules
 - [ ] Noisy Label
 - [ ] More Data Augmentaions
 - [ ] More Convenient
