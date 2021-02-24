@@ -12,7 +12,7 @@
 #### Sampler
 - [x] Imbalance
 #### Augmentation
-- [x] general Augmentaions and albumentations
+- [x] general Augmentaions and [albumentations](https://github.com/albumentations-team/albumentations)
 - [x] CutOut/Mixup/CutMix/SnapMix
 <br>
 
@@ -88,11 +88,23 @@
 <br>
 <br>
 <br>
+  
 
-## Step by Step
+## **Step by Step**
 <br>
 <br>
 <br>
+
+
+## **Future**
+- [ ] Self-Attenation
+- [ ] Noisy Label
+- [ ] More Data Augmentaions
+- [ ] More Convenient
+<br>
+<br>
+<br>
+
 
 ## **References**
 [1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
