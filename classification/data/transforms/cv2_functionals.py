@@ -1,10 +1,3 @@
-'''
-Author      : now more
-Contact     : lin.honghui@qq.com
-LastEditors: Please set LastEditors
-LastEditTime: 2020-09-25 13:32:29
-Description :
-'''
 
 import numpy as np
 import torch
