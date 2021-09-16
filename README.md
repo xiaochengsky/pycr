@@ -105,6 +105,11 @@
 <br>
 
 
+## **Installation**
+Please refer to get_started.md for installation.
+
+
+
 ## **References**
 [1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
 [2] [PyRetri](https://github.com/PyRetri/PyRetri) <br>
