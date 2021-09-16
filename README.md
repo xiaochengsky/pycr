@@ -3,6 +3,14 @@
 ![Pipeline](https://raw.githubusercontent.com/xiaochengsky/PyCR/master/Pipeline.png)
 <br>
 
+## **Installation**
+Please refer to [get_started.md](https://github.com/xiaochengsky/PyCR/blob/master/docs/get_started.md) for installation.
+
+## **How to use**
+TODO
+
+
+
 
 ## **Classification**
 ### **Data**
@@ -103,12 +111,7 @@
 <br>
 <br>
 <br>
-
-
-## **Installation**
-Please refer to get_started.md for installation.
-
-
+  
 
 ## **References**
 [1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
