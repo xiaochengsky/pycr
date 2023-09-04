@@ -1,0 +1,5 @@
+logs/
+*.pt
+*.mnn
+*.onnx
+
