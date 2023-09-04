@@ -115,7 +115,7 @@ TODO
 ## **References**
 [1] [FastReID](https://github.com/JDAI-CV/fast-reid) <br>
 [2] [PyRetri](https://github.com/PyRetri/PyRetri) <br>
-[3] [reid-strong-baseline](https://github.com/michuanhaohao/reid-strong-baseline) <br>
+[3] [mmdetection](https://github.com/open-mmlab/mmdetection.git) <br>
 
 
 
